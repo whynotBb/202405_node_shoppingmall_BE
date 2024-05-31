@@ -23,4 +23,13 @@ userController.createUser = async (req, res) => {
     }
 };
 
+userController.getUser = async (req, res) => {
+    try {
+        const userList = await User.find({});
+        res.status(200).json({status: 'ok', data: userList});
+    } catch (err) {
+        res.status(400).json({status: 'fail', error: err});
+    }
+};
+
 module.exports = userController;
