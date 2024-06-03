@@ -1,4 +1,4 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 const productSchema = Schema(
     {
@@ -13,6 +13,10 @@ const productSchema = Schema(
         },
         image: {
             type: String,
+            required: true,
+        },
+        size: {
+            type: Array,
             required: true,
         },
         category: {
@@ -33,14 +37,14 @@ const productSchema = Schema(
         },
         status: {
             type: String,
-            default: 'active',
+            default: "active",
         },
         isDelete: {
             type: Boolean,
             default: false,
         },
     },
-    {timestamps: true}
+    { timestamps: true }
 );
 
 // FE에 전달하지 않을 데이터 사전 제거
@@ -52,5 +56,5 @@ productSchema.methods.toJSON = function () {
     return obj;
 };
 
-const Product = mongoose.model('Product', productSchema);
+const Product = mongoose.model("Product", productSchema);
 module.exports = Product;
