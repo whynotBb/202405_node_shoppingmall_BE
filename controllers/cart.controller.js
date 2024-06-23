@@ -1,5 +1,7 @@
 const { response } = require("express");
 const Cart = require("../models/Cart");
+const { populate } = require("dotenv");
+const { model } = require("mongoose");
 
 const cartController = {};
 
@@ -67,6 +69,40 @@ cartController.deleteItem = async (req, res) => {
         const cart = await Cart.findOne({ userId });
         cart.items = cart.items.filter((item) => !item._id.equals(productId));
         await cart.save();
+        res.status(200).json({ status: 200, cartItmeQty: cart.items.length });
+    } catch (error) {
+        return res.status(400).json({ status: "fail", error: error.message });
+    }
+};
+cartController.updateItem = async (req, res) => {
+    try {
+        const { userId } = req;
+        const id = req.params.id;
+        const { qty } = req.body;
+        const cart = await Cart.findOne({ userId }).populate({
+            path: "items",
+            populate: {
+                path: "productId",
+                model: "Product",
+            },
+        });
+        if (!cart) throw new Error("There is no cart for this user");
+        console.log(cart);
+        const index = cart.items.findIndex((item) => item._id.equals(id));
+        if (index === -1) throw new Error("Can not find item");
+        cart.items[index].qty = qty;
+        await cart.save();
+        res.status(200).json({ status: 200, cartItmeQty: cart.items.length });
+    } catch (error) {
+        return res.status(400).json({ status: "fail", error: error.message });
+    }
+};
+
+cartController.getCartQty = async (req, res) => {
+    try {
+        const { userId } = req;
+        const cart = await Cart.findOne({ userId });
+        if (!cart) throw new Error("There is no cart!");
         res.status(200).json({ status: 200, cartItmeQty: cart.items.length });
     } catch (error) {
         return res.status(400).json({ status: "fail", error: error.message });
