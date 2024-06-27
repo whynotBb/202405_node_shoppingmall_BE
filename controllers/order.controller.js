@@ -1,6 +1,6 @@
 const Order = require("../models/Order");
-const productController = require("./product.controller");
 const { randomStringGenerator } = require("../utils/randomStringGenerator");
+const productController = require("./product.controller");
 
 const orderController = {};
 
@@ -8,14 +8,15 @@ orderController.createOrder = async (req, res) => {
     try {
         // fe에서 보낸거 받아오기 {}
         const { userId } = req;
-        const { totalPrice, shipTo, contact, orderList } = req.body;
+        const { totalPrice, shipTo, contact, items } = req.body;
+        console.log("be!!!", req.body);
         // 재고 확인하고, 재고 업데이트 한다. : 재고가 체크 되는 productController 에 함수를 만들어 처리
-        const insufficientStockItmes =
-            await productController.checkItemListStock(orderList);
+        const insufficientStockItems =
+            await productController.checkItemListStock(items);
         // 재고가 불충분한 아이템이 있으면 > error
-        // insufficientStockItmes배열에서 item 의 message 만 뽑아서(reduce), 스트링""으로 반환
-        if (insufficientStockItmes.length > 0) {
-            const errorMessage = insufficientStockItmes.reduce(
+        // insufficientStockItems배열에서 item 의 message 만 뽑아서(reduce), 스트링""으로 반환
+        if (insufficientStockItems.length > 0) {
+            const errorMessage = insufficientStockItems.reduce(
                 (total, item) => (total += item.message),
                 ""
             );

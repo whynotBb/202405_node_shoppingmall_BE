@@ -133,7 +133,7 @@ productController.checkStock = async (item) => {
     // 구매 qty 와 재고
     if (product.stock[item.size] < item.qty) {
         return {
-            isVerify: falsw,
+            isVerify: false,
             message: `${product.name}의 ${item.size} 재고가 부족합니다.`,
         };
     }
@@ -147,14 +147,15 @@ productController.checkStock = async (item) => {
 };
 
 productController.checkItemListStock = async (itemList) => {
-    const insufficientStockItmes = [];
+    const insufficientStockItems = [];
     // 재고 확인 로직
     // 비동기 로직이 많은 경우 Promise.all 을 사용하여 좀 더 빠르게 처리할 수 있다. 직렬->병렬로 처리됨
+    // console.log("map 돌리는 곳", itemList, insufficientStockItems);
     await Promise.all(
         itemList.map(async (item) => {
             const stockCheck = await productController.checkStock(item);
             if (!stockCheck.isVerify) {
-                insufficientStockItmes.push({
+                insufficientStockItems.push({
                     item,
                     message: stockCheck.message,
                 });
@@ -162,8 +163,7 @@ productController.checkItemListStock = async (itemList) => {
             return stockCheck;
         })
     );
-
-    return insufficientStockItmes;
+    return insufficientStockItems;
 };
 
 module.exports = productController;

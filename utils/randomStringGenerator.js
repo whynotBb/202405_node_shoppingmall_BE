@@ -4,3 +4,5 @@ const randomStringGenerator = () => {
     ).join("");
     return randomString;
 }; // orderNum 용
+
+module.exports = { randomStringGenerator };
