@@ -128,8 +128,10 @@ productController.deleteProduct = async (req, res) => {
 };
 
 productController.checkStock = async (item) => {
+    console.log("checkStock!!!!", item);
     // 구매하려는 아이템 재고정보 가져오기
     const product = await Product.findById(item.productId);
+    console.log("checkStock product!!!!", product);
     // 구매 qty 와 재고
     if (product.stock[item.size] < item.qty) {
         return {
@@ -141,12 +143,15 @@ productController.checkStock = async (item) => {
     // 충분하면 재고에서 구매 qty 를 빼고 성공 결과 보내기
     const newStock = { ...product.stock };
     newStock[(item.size -= item.qty)];
+    console.log("checkStock newStock!!!!", newStock);
     product.stock = newStock;
+
     await product.save();
     return { isVerify: true };
 };
 
 productController.checkItemListStock = async (itemList) => {
+    console.log("checkItemListStock", itemList);
     const insufficientStockItems = [];
     // 재고 확인 로직
     // 비동기 로직이 많은 경우 Promise.all 을 사용하여 좀 더 빠르게 처리할 수 있다. 직렬->병렬로 처리됨

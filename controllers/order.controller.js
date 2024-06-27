@@ -28,12 +28,14 @@ orderController.createOrder = async (req, res) => {
             totalPrice,
             shipTo,
             contact,
-            items: orderList,
+            items: items,
             orderNum: randomStringGenerator(),
         });
         await newOrder.save();
+        console.log(newOrder);
         res.status(200).json({
             status: "success",
+            data: newOrder,
             orderNum: newOrder.orderNum,
         });
     } catch (error) {
