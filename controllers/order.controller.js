@@ -1,6 +1,8 @@
+const { populate } = require("dotenv");
 const Order = require("../models/Order");
 const { randomStringGenerator } = require("../utils/randomStringGenerator");
 const productController = require("./product.controller");
+const PAGE_SIZE = 5;
 
 const orderController = {};
 
@@ -39,11 +41,55 @@ orderController.createOrder = async (req, res) => {
             orderNum: newOrder.orderNum,
         });
     } catch (error) {
-        {
-            return res
-                .status(400)
-                .json({ status: "fail", error: error.message });
+        return res.status(400).json({ status: "fail", error: error.message });
+    }
+};
+
+orderController.getOrderList = async (req, res) => {
+    try {
+        const { userId } = req;
+        console.log(userId);
+        // 데이터 중에 userId 가 일치하는 전체를 가져오기 .find({ userId: userId });
+        const orderList = await Order.find({ userId: userId }).populate({
+            path: "items",
+            populate: {
+                path: "productId",
+                model: "Product",
+            },
+        });
+        if (!orderList) throw new Error("주문 리스트가 없습니다.");
+        console.log(orderList);
+        res.status(200).json({ status: "success", data: orderList });
+    } catch (error) {
+        return res.status(400).json({ status: "fail", error: error.message });
+    }
+};
+
+orderController.getOrders = async (req, res) => {
+    try {
+        const { page, orderNum } = req.query;
+        const cond = orderNum && {
+            orderNum: { $regex: orderNum, $options: "i" },
+        };
+
+        let query = Order.find(cond).sort({ _id: -1 }).populate({
+            path: "userId",
+            model: "User",
+            select: "email",
+        });
+        let response = { status: "success" };
+        if (page) {
+            query.skip((page - 1) * PAGE_SIZE).limit(PAGE_SIZE);
+            const totalItemNum = await Order.find(cond).count();
+            const totalPageNum = Math.ceil(totalItemNum / PAGE_SIZE);
+            response.totalPageNum = totalPageNum;
         }
+
+        const orderList = await query.exec();
+        response.data = orderList;
+        res.status(200).json(response);
+    } catch (error) {
+        return res.status(400).json({ status: "fail", error: error.message });
     }
 };
 
