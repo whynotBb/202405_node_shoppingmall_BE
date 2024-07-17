@@ -117,7 +117,9 @@ productController.checkStock = async (item) => {
 	// 재고가 불충분하면, 메시지와 함께 데이터 반환
 	// 충분하면 재고에서 구매 qty 를 빼고 성공 결과 보내기
 	const newStock = { ...product.stock };
-	newStock[(item.size -= item.qty)];
+	// newStock[(item.size -= item.qty)];
+	console.log("eeeee", newStock[item.size]);
+	newStock[item.size] -= item.qty;
 	console.log("checkStock newStock!!!!", newStock);
 	product.stock = newStock;
 

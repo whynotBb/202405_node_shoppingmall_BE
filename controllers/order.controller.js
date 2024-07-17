@@ -64,9 +64,11 @@ orderController.getOrderList = async (req, res) => {
 orderController.getOrders = async (req, res) => {
 	try {
 		const { page, orderNum } = req.query;
-		const cond = orderNum && {
-			orderNum: { $regex: orderNum, $options: "i" },
-		};
+		const cond = orderNum
+			? {
+					orderNum: { $regex: orderNum, $options: "i" },
+			  }
+			: null;
 
 		let query = Order.find(cond)
 			.sort({ _id: -1 })
