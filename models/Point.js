@@ -1,17 +1,32 @@
 const mongoose = require("mongoose");
 const User = require("./User");
 const Schema = mongoose.Schema;
-const pointSchema = Schema({
-	userId: {
-		type: mongoose.ObjectId,
-		ref: User,
-	},
-	totalPoint: {
-		type: Number,
-		require: true,
-	},
-	addPoint: { type: Object, required: true },
-	deductPoint: { type: Object, required: true },
+
+const pointEntrySchema = new Schema({
+    date: {
+        type: Date,
+        required: true,
+        default: Date.now,
+    },
+    points: {
+        type: Number,
+        required: true,
+    },
+});
+
+const pointSchema = new Schema({
+    userId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: User,
+        required: true,
+    },
+    totalPoint: {
+        type: Number,
+        required: true,
+        default: 0,
+    },
+    addPoints: [pointEntrySchema],
+    deductPoints: [pointEntrySchema],
 });
 
 const Point = mongoose.model("Point", pointSchema);
