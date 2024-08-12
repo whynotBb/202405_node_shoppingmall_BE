@@ -5,5 +5,6 @@ const router = express.Router();
 
 router.post("/", authController.authenticate, pointController.addPoint);
 router.get("/", authController.authenticate, pointController.getPoint);
+router.put("/", authController.authenticate, pointController.deductPoint);
 
 module.exports = router;

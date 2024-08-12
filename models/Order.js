@@ -18,6 +18,16 @@ const orderSchema = Schema(
             required: true,
             default: 0,
         },
+        usePoint: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
+        paymentAmount: {
+            type: Number,
+            required: true,
+            default: 0,
+        },
         userId: {
             type: mongoose.ObjectId,
             ref: User,
